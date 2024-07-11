@@ -1,15 +1,15 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useContext } from "react";
 import { db } from "../auth/firebase";
 import { AuthContext } from "../auth/authcontect";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import NotUser from "../overlay/notuser";
+import { GrCaretPrevious, GrCaretNext } from "react-icons/gr";
 
 function ShowList() {
   const [dailyEntries, setDailyEntries] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const { user } = useContext(AuthContext);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [showDrinks, setShowDrinks] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -90,40 +90,41 @@ function ShowList() {
     });
   };
 
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-    setShowDrinks(true);
-  };
-
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const monthYear = `${year}-${String(month + 1).padStart(2, "0")}`;
   const calendarDays = generateCalendarDays(year, month);
 
   return (
-    <div className="flex-col justify-center items-center m-auto shadow-lg p-6 rounded w-3/4">
+    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl p-8 my-12 w-screen">
       <NotUser />
-      <h1 className="flex justify-center text-4xl mb-6">User Drink History</h1>
-      <div className="flex justify-between items-center mb-4">
+      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+        Sugar Intake History
+      </h1>
+      <div className="flex justify-between items-center mb-6 ">
         <button
           onClick={goToPreviousMonth}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-all duration-300 ease-in-out hover:scale-125 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
         >
-          Previous Month
+          <GrCaretPrevious size={30} />
         </button>
-        <h2 className="text-3xl">
+        <h2 className="text-3xl font-semibold text-gray-700 animate-fade-in">
           {months[month]} {year}
         </h2>
         <button
           onClick={goToNextMonth}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-all duration-300 ease-in-out hover:scale-125 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
         >
-          Next Month
+          <GrCaretNext size={30} />
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-2">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="text-center font-bold">
+      <div className="grid grid-cols-7 gap-4">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+          <div
+            key={day}
+            className="text-center font-bold text-gray-600 mb-2 animate-fade-in"
+            style={{ animationDelay: `${index}ms` }}
+          >
             {day}
           </div>
         ))}
@@ -131,19 +132,25 @@ function ShowList() {
           const dayOfWeek = new Date(date).getDay();
           const entry = groupedEntries[monthYear]?.[date];
           return index === 0 ? (
-            <>
+            <React.Fragment key={date}>
               {Array(dayOfWeek)
                 .fill()
                 .map((_, i) => (
                   <div
                     key={`empty-${i}`}
-                    className="h-24 border border-gray-200"
+                    className="h-24 border border-gray-200 rounded-lg bg-gray-50 animate-fade-in opacity-0"
+                    style={{ animationDelay: `${i * 20}ms` }}
                   ></div>
                 ))}
-              <DayCell key={date} date={date} entry={entry} />
-            </>
+              <DayCell date={date} entry={entry} index={dayOfWeek + index} />
+            </React.Fragment>
           ) : (
-            <DayCell key={date} date={date} entry={entry} />
+            <DayCell
+              key={date}
+              date={date}
+              entry={entry}
+              index={index + dayOfWeek}
+            />
           );
         })}
       </div>
@@ -151,10 +158,17 @@ function ShowList() {
   );
 }
 
-function DayCell({ date, entry }) {
+function DayCell({ date, entry, index }) {
   const dayNumber = date.split("-")[2];
+  const animationDelay = `${index * 20}ms`;
+
   return (
-    <div className="h-24 border border-gray-200 p-1 overflow-auto">
+    <div
+      className={`h-24 border border-gray-200 p-1 overflow-auto animate-fade-in opacity-0 ${
+        !entry ? "" : entry.warning ? "bg-green-100" : "bg-red-100"
+      }`}
+      style={{ animationDelay }}
+    >
       <div className="font-bold">{dayNumber}</div>
       {entry && (
         <div className="text-xs">

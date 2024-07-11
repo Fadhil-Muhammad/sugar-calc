@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../auth/firebase";
 
+// eslint-disable-next-line react/prop-types
 function DrinkSelector({ onSelect }) {
   const [drinks, setDrinks] = useState([]);
   const [filteredDrinks, setFilteredDrinks] = useState([]);
@@ -19,7 +20,6 @@ function DrinkSelector({ onSelect }) {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Fetched drinks:", drinksList);
         setDrinks(drinksList);
       } catch (err) {
         console.error("Error fetching drinks:", err);
