@@ -15,8 +15,8 @@ const Reason = () => {
       </p>
       <p className="text-sm text-gray-600 bg-gray-200 p-4 rounded-xl mt-2 flex align-middle">
         This website only calculates your sugar intake based on what you drink.
-        You can still consume sugar from other sources, but we won't calculate
-        those. So, consume anything else wisely.
+        You can still consume sugar from other sources, but we won&apos;t
+        calculate those. So, consume anything else wisely.
       </p>
     </div>
   );
