@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../auth/authcontect";
-import { setDoc, getDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../auth/firebase";
 import DrinkSelector from "./drinkSelector";
 import NotUser from "../overlay/notuser";
@@ -34,73 +33,112 @@ function SugarCalculator() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch user data and drinks
   useEffect(() => {
-    const fetchUserDataAndDrinks = async () => {
-      console.log("Fetching data. User:", user?.uid, "Date:", currentDate);
-      setIsLoading(true);
-      if (user) {
-        // Fetch user gender and set sugar limit
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists() && userDocSnap.data().gender === "female") {
-          setDAILY_SUGAR_LIMIT(25);
-        }
-
-        // Fetch drinks from Firestore
-        const userDayDocRef = doc(
-          db,
-          "userDailySugar",
-          `${currentDate}_${user.uid}`
-        );
-        const userDayDoc = await getDoc(userDayDocRef);
-
-        if (userDayDoc.exists()) {
-          const data = userDayDoc.data();
-          console.log("Fetched drinks from Firestore:", data.drinks);
-          setSelectedDrinks(data.drinks || []);
-        } else {
-          console.log(
-            "No data in Firestore for this date, setting empty array"
-          );
-          setSelectedDrinks([]);
-        }
-      } else {
-        console.log("User not logged in, setting empty array");
-        setSelectedDrinks([]);
-      }
+    const localData = localStorage.getItem(
+      `${currentDate}_${user?.uid}_drinks`
+    );
+    if (localData) {
+      setSelectedDrinks(JSON.parse(localData));
       setIsLoaded(true);
       setIsLoading(false);
-    };
+    } else {
+      const fetchUserDataAndDrinks = async () => {
+        console.log("Fetching data. User:", user?.uid, "Date:", currentDate);
+        setIsLoading(true);
+        if (user) {
+          try {
+            // Fetch user gender and set sugar limit
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (
+              userDocSnap.exists() &&
+              userDocSnap.data().gender === "female"
+            ) {
+              setDAILY_SUGAR_LIMIT(25);
+            }
 
-    fetchUserDataAndDrinks();
+            // Fetch drinks from Firestore
+            const userDayDocRef = doc(
+              db,
+              "userDailySugar",
+              `${currentDate}_${user.uid}`
+            );
+            const userDayDoc = await getDoc(userDayDocRef);
+            console.log("User day document exists:", userDayDoc.exists());
+
+            if (userDayDoc.exists()) {
+              const data = userDayDoc.data();
+              console.log("Fetched drinks from Firestore:", data.drinks);
+              setSelectedDrinks(data.drinks || []);
+              localStorage.setItem(
+                `${currentDate}_${user.uid}_drinks`,
+                JSON.stringify(data.drinks || [])
+              );
+            } else {
+              console.log(
+                "No data in Firestore for this date, setting empty array"
+              );
+              setSelectedDrinks([]);
+              localStorage.setItem(
+                `${currentDate}_${user.uid}_drinks`,
+                JSON.stringify([])
+              );
+            }
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        } else {
+          console.log("User not logged in, setting empty array");
+          setSelectedDrinks([]);
+        }
+        setIsLoaded(true);
+        setIsLoading(false);
+      };
+
+      fetchUserDataAndDrinks();
+    }
   }, [user, currentDate]);
 
-  // Save data to Firestore whenever selectedDrinks changes
   useEffect(() => {
     const saveDailyData = async () => {
       if (user) {
         console.log("Saving data to Firestore:", selectedDrinks);
-        const totalSugar = selectedDrinks.reduce(
-          (sum, drink) => sum + drink.sugar,
-          0
-        );
-        const isSafe = totalSugar <= DAILY_SUGAR_LIMIT;
-
         try {
-          await setDoc(
-            doc(db, "userDailySugar", `${currentDate}_${user.uid}`),
-            {
+          const userDayDocRef = doc(
+            db,
+            "userDailySugar",
+            `${currentDate}_${user.uid}`
+          );
+
+          if (selectedDrinks.length > 0) {
+            const totalSugar = selectedDrinks.reduce(
+              (sum, drink) => sum + drink.sugar,
+              0
+            );
+            const isSafe = totalSugar <= DAILY_SUGAR_LIMIT;
+
+            await setDoc(userDayDocRef, {
               userId: user.uid,
               date: currentDate,
               totalSugar: totalSugar,
               drinks: selectedDrinks,
               warning: isSafe,
-            }
+            });
+            console.log("Data saved successfully for date:", currentDate);
+          } else {
+            await deleteDoc(userDayDocRef);
+            console.log("Empty data, document deleted for date:", currentDate);
+          }
+
+          localStorage.setItem(
+            `${currentDate}_${user.uid}_drinks`,
+            JSON.stringify(selectedDrinks)
           );
-          console.log("Data saved successfully for date:", currentDate);
         } catch (error) {
-          console.error("Error saving daily data to Firestore:", error);
+          console.error(
+            "Error saving/deleting daily data in Firestore:",
+            error
+          );
         }
       }
     };
@@ -108,14 +146,18 @@ function SugarCalculator() {
     saveDailyData();
   }, [selectedDrinks, user, currentDate, DAILY_SUGAR_LIMIT]);
 
+  const removeDrink = (index) => {
+    console.log("Removing drink at index:", index);
+    setSelectedDrinks((prevDrinks) => {
+      const newDrinks = prevDrinks.filter((_, i) => i !== index);
+      console.log("New drinks array after removal:", newDrinks);
+      return newDrinks;
+    });
+  };
+
   const addDrink = (drink) => {
     console.log("Adding drink:", drink);
     setSelectedDrinks((prevDrinks) => [...prevDrinks, drink]);
-  };
-
-  const removeDrink = (index) => {
-    console.log("Removing drink at index:", index);
-    setSelectedDrinks((prevDrinks) => prevDrinks.filter((_, i) => i !== index));
   };
 
   const totalSugar = selectedDrinks.reduce(
