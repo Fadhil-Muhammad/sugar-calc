@@ -1,0 +1,12 @@
+runtime: nodejs20
+
+handlers:
+# Serve static files
+- url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|json))$
+  static_files: dist/\1
+  upload: dist/.*\.(js|css|png|jpg|jpeg|gif|ico|json)$
+
+# Catch all handler to index.html
+- url: /.*
+  static_files: dist/index.html
+  upload: dist/index.html

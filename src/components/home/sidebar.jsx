@@ -14,7 +14,12 @@ const NavItem = ({ to, icon, tooltip }) => (
       <div className="text-white group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
-      <span className="absolute left-full ml-4 px-2 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+      <span
+        className="absolute left-full ml-4 px-2 py-1 bg-gray-800 text-white text-sm rounded-md 
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap
+                       sm:flex
+                       bottom-full sm:bottom-auto left-1/2 sm:left-full -translate-x-1/2 sm:translate-x-0 mb-2 sm:mb-0 sm:top-1/2 sm:-translate-y-1/2"
+      >
         {tooltip}
       </span>
     </Link>
@@ -23,20 +28,28 @@ const NavItem = ({ to, icon, tooltip }) => (
 
 const SideBar = () => {
   return (
-    <nav className="fixed left-0 top-10 h-full w-20 bg-gray-100 text-white shadow-sm flex flex-col items-center justify-center py-8 z-50">
-      <ul className="space-y-8">
-        <NavItem to="/" icon={<RiHomeSmile2Fill size={28} />} tooltip="Home" />
+    <nav className="fixed bottom-0 left-0 w-full sm:top-10 sm:left-0 sm:h-full sm:w-20 bg-gray-100 text-white shadow-sm flex sm:flex-col items-center justify-around sm:justify-center py-2 sm:py-8 z-50">
+      <ul className="flex sm:flex-col items-center justify-around sm:justify-center w-full sm:w-auto sm:space-y-8">
+        <NavItem
+          to="/"
+          icon={<RiHomeSmile2Fill size={24} sm={28} />}
+          tooltip="Home"
+        />
         <NavItem
           to="/calc"
-          icon={<RiDrinks2Fill size={28} />}
+          icon={<RiDrinks2Fill size={24} sm={28} />}
           tooltip="Calculator"
         />
         <NavItem
           to="/user"
-          icon={<BsClockHistory size={28} />}
+          icon={<BsClockHistory size={24} sm={28} />}
           tooltip="History"
         />
-        <NavItem to="/auth" icon={<RiUser5Fill size={28} />} tooltip="User" />
+        <NavItem
+          to="/auth"
+          icon={<RiUser5Fill size={24} sm={28} />}
+          tooltip="User"
+        />
       </ul>
     </nav>
   );

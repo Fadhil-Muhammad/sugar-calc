@@ -7,13 +7,13 @@ import SugarEmote from "../user/sugarEmote";
 const Reason = () => {
   return (
     <div>
-      <p className="mt-4 text-gray-700 justify-normal">
+      <p className="mt-4 text-gray-700 justify-normal text-sm sm:text-base">
         We calculate your sugar intake based on the guidelines from the American
         Heart Association. Men should consume no more than 9 teaspoons (36 grams
         or 150 calories) of added sugar per day, while women should consume no
         more than 6 teaspoons (25 grams or 100 calories) per day.
       </p>
-      <p className="text-sm text-gray-600 bg-gray-200 p-4 rounded-xl mt-2 flex align-middle">
+      <p className="text-xs sm:text-sm text-gray-600 bg-gray-200 p-3 sm:p-4 rounded-xl mt-2 flex align-middle">
         This website only calculates your sugar intake based on what you drink.
         You can still consume sugar from other sources, but we won&apos;t
         calculate those. So, consume anything else wisely.
@@ -40,39 +40,39 @@ function Home() {
     <div
       className={`flex flex-col items-center justify-center min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 w-screen ${fadeInClass} ${loadedClass}`}
     >
-      <div className="grid gap-8 mx-4 md:grid-cols-12 max-w-6xl w-full">
+      <div className="grid gap-4 sm:gap-8 mx-4 md:grid-cols-12 max-w-6xl w-full">
         <div
-          className={`md:col-span-12 bg-indigo-500 rounded-xl shadow-md m-auto p-8 transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
+          className={`md:col-span-12 bg-indigo-500 rounded-xl shadow-md m-auto p-4 sm:p-8 transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
         >
-          <h1 className="text-7xl md:text-7xl font-bold mb-6 text-center text-white">
+          <h1 className="text-4xl sm:text-7xl font-bold mb-4 sm:mb-6 text-center text-white">
             Calculate your sugar for a better future!
           </h1>
         </div>
         <div
-          className={`md:col-span-4 bg-white rounded-xl shadow-md p-8 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
+          className={`md:col-span-4 bg-white rounded-xl shadow-md p-4 sm:p-8 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
         >
-          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center text-gray-800">
             Click here to start the calculation
           </h2>
           <Link
             to="/calc"
-            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 flex items-center animate-pulse"
+            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-all duration-300 flex items-center animate-pulse text-sm sm:text-base"
           >
-            <MdCalculate size={24} className="mr-2" />
+            <MdCalculate size={20} className="mr-2" />
             <span>Start Now</span>
           </Link>
         </div>
         <div
-          className={`md:col-span-8 bg-white rounded-xl shadow-md p-8 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
+          className={`md:col-span-8 bg-white rounded-xl shadow-md p-4 sm:p-8 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${fadeInClass} ${loadedClass}`}
         >
           <SugarEmote />
         </div>
       </div>
-      <div className="grid mx-4 md:grid-cols-12 max-w-6xl w-full mt-8">
+      <div className="grid mx-4 md:grid-cols-12 max-w-6xl w-full mt-4 sm:mt-8">
         <div
-          className={`md:col-span-10 bg-white rounded-xl shadow-md m-auto p-8 transition-all duration-300 hover:scale-105 flex-col ${fadeInClass} ${loadedClass}`}
+          className={`md:col-span-10 bg-white rounded-xl shadow-md m-auto p-4 sm:p-8 transition-all duration-300 hover:scale-105 flex-col ${fadeInClass} ${loadedClass}`}
         >
-          <p className="text-xl flex justify-center items-center">
+          <p className="text-lg sm:text-xl flex justify-center items-center">
             How do we calculate your sugar?
           </p>
           <div
@@ -88,10 +88,10 @@ function Home() {
         >
           <button
             onClick={() => setShowReason(!showReason)}
-            className="bg-indigo-500 hover:bg-indigo-600 shadow-md text-white font-bold py-3 px-6 rounded-full transition-all duration-300 flex items-center"
+            className="bg-indigo-500 hover:bg-indigo-600 shadow-md text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-all duration-300 flex items-center"
           >
             <TbHandClick
-              size={50}
+              size={30}
               className={`transition-transform duration-300 ${
                 showReason ? "rotate-180" : ""
               }`}

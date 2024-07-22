@@ -85,7 +85,7 @@ export default function SugarEmote() {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
-            className={`h-2.5 rounded-full ${barColor}`}
+            className={`h-2.5 rounded-full max-w-[150%] ${barColor}`}
             style={{ width: `${percentage}%` }}
           ></div>
         </div>

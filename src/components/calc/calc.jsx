@@ -32,6 +32,7 @@ function SugarCalculator() {
   const [DAILY_SUGAR_LIMIT, setDAILY_SUGAR_LIMIT] = useState(36);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [temporaryDrinks, setTemporaryDrinks] = useState([]);
 
   useEffect(() => {
     const localData = localStorage.getItem(
@@ -39,7 +40,6 @@ function SugarCalculator() {
     );
     if (localData) {
       setSelectedDrinks(JSON.parse(localData));
-      setIsLoaded(true);
       setIsLoading(false);
     } else {
       const fetchUserDataAndDrinks = async () => {
@@ -91,13 +91,19 @@ function SugarCalculator() {
           console.log("User not logged in, setting empty array");
           setSelectedDrinks([]);
         }
-        setIsLoaded(true);
         setIsLoading(false);
       };
 
       fetchUserDataAndDrinks();
     }
   }, [user, currentDate]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => setIsLoaded(true), 300); // Increased delay for visibility
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const saveDailyData = async () => {
@@ -160,6 +166,10 @@ function SugarCalculator() {
     setSelectedDrinks((prevDrinks) => [...prevDrinks, drink]);
   };
 
+  const addTemporaryDrink = (newDrink) => {
+    setTemporaryDrinks((prevDrinks) => [...prevDrinks, newDrink]);
+  };
+
   const totalSugar = selectedDrinks.reduce(
     (sum, drink) => sum + drink.sugar,
     0
@@ -174,11 +184,15 @@ function SugarCalculator() {
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 flex items-center justify-center px-4 w-full">
+        <div className="text-2xl text-gray-600">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 flex items-center justify-center px-4 w-full">
+    <div className="min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 flex items-center justify-center px-2 sm:px-4 w-full py-4 sm:py-0">
       {!user && <NotUser />}
       <div
         className={`bg-white rounded-xl shadow-2xl p-8 max-w-xl w-full m-6 transition-all duration-500 ease-out ${
@@ -186,7 +200,7 @@ function SugarCalculator() {
         }`}
       >
         <p
-          className={`text-gray-600 mb-6 text-center transition-opacity duration-500 ${
+          className={`text-gray-600 mb-4 sm:mb-6 text-center text-sm sm:text-base transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -198,24 +212,28 @@ function SugarCalculator() {
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
         >
-          <DrinkSelector onSelect={addDrink} />
+          <DrinkSelector
+            onSelect={addDrink}
+            temporaryDrinks={temporaryDrinks}
+            addTemporaryDrink={addTemporaryDrink}
+          />
         </div>
 
         <div
-          className={`mt-8 transition-opacity duration-500 delay-200 ${
+          className={`mt-6 sm:mt-8 transition-opacity duration-500 delay-200 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
         >
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">
             Today&apos;s Drinks
           </h2>
-          <ul className="space-y-3">
+          <ul className="space-y-2 sm:space-y-3">
             {selectedDrinks.map((drink, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between bg-gray-50 p-4 rounded-lg transition-all duration-200 hover:bg-gray-100"
+                className="flex items-center justify-between bg-gray-50 p-3 sm:p-4 rounded-lg transition-all duration-200 hover:bg-gray-100"
               >
-                <span className="text-gray-700">
+                <span className="text-gray-700 text-sm sm:text-base">
                   {drink.name} -{" "}
                   <span className="font-medium text-blue-600">
                     {drink.sugar}g
@@ -224,7 +242,7 @@ function SugarCalculator() {
                 </span>
                 <button
                   onClick={() => removeDrink(index)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-200 p-2 rounded-full hover:bg-red-100"
+                  className="text-red-500 hover:text-red-700 transition-colors duration-200 p-1 sm:p-2 rounded-full hover:bg-red-100 text-sm sm:text-base"
                 >
                   Remove
                 </button>
@@ -234,18 +252,18 @@ function SugarCalculator() {
         </div>
 
         <div
-          className={`mt-8 pt-6 border-t border-gray-200 transition-opacity duration-500 delay-300 ${
+          className={`mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 transition-opacity duration-500 delay-300 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
         >
-          <p className="text-lg font-semibold text-gray-800 flex justify-between items-center">
+          <p className="text-base sm:text-lg font-semibold text-gray-800 flex justify-between items-center">
             Total Sugar:
-            <span className="text-3xl text-blue-600 font-bold">
+            <span className="text-2xl sm:text-3xl text-blue-600 font-bold">
               {totalSugar}g
             </span>
           </p>
           <p
-            className={`mt-4 text-center py-3 px-4 rounded-lg font-medium ${
+            className={`mt-3 sm:mt-4 text-center py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium text-sm sm:text-base ${
               isSafe
                 ? "bg-green-100 text-green-800 border border-green-300"
                 : "bg-red-100 text-red-800 border border-red-300"
