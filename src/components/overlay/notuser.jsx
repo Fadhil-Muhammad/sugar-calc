@@ -17,7 +17,7 @@ function NotUser() {
   if (!user) {
     return (
       <div
-        className={`fixed top-11 transform right-2 transition-all duration-500 ease-out ${
+        className={`fixed top-11 transform right-2 transition-all duration-500 ease-out z-50 ${
           isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >

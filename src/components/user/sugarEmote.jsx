@@ -25,7 +25,7 @@ export default function SugarEmote() {
         if (!querySnapshot.empty) {
           setDailySugar(querySnapshot.docs[0].data());
         } else {
-          setDailySugar({ totalSugar: 0 }); // Set default if no data for today
+          setDailySugar({ totalSugar: 0 });
         }
       }
     };
@@ -85,7 +85,7 @@ export default function SugarEmote() {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
-            className={`h-2.5 rounded-full max-w-[150%] ${barColor}`}
+            className={`h-2.5 rounded-full max-w-[150%] sm:max-w-[100%] ${barColor}`}
             style={{ width: `${percentage}%` }}
           ></div>
         </div>

@@ -38,7 +38,7 @@ function Home() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 w-screen ${fadeInClass} ${loadedClass}`}
+      className={`flex flex-col items-center justify-center min-h-[95.6vh] bg-gradient-to-br from-gray-100 to-green-100 w-screen p-10 ${fadeInClass} ${loadedClass}`}
     >
       <div className="grid gap-4 sm:gap-8 mx-4 md:grid-cols-12 max-w-6xl w-full">
         <div
